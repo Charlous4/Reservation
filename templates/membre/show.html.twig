@@ -32,15 +32,17 @@
             </div>
             <div class="col-md-6">
                 <h6 class="text-muted">Email</h6>
-                <p>{{ membre.mail }}</p>
-            </div>
-            <div class="col-md-6">
-                <h6 class="text-muted">Téléphone</h6>
-                <p>{{ membre.numTel }}</p>
+                <p>{{ membre.email }}</p>
             </div>
             <div class="col-md-6">
                 <h6 class="text-muted">Rôle</h6>
-                <p>{{ membre.role.lib }}</p>
+                {% if membre.role %}
+                    {# Affiche le rôle dans une petite étiquette bleue #}
+                    <span class="badge bg-info text-dark">{{ membre.role.lib }}</span>
+                {% else %}
+                    {# Affiche un texte par défaut si pas de rôle #}
+                    <span class="text-muted fst-italic">Aucun rôle défini</span>
+                {% endif %}
             </div>
         </div>
     </div>

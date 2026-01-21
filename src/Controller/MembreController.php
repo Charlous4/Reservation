@@ -7,10 +7,10 @@ use App\Form\MembreType;
 use App\Repository\MembreRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
-
 
 #[Route('/membre')]
 final class MembreController extends AbstractController
@@ -24,13 +24,20 @@ final class MembreController extends AbstractController
     }
 
     #[Route('/new', name: 'app_membre_new', methods: ['GET', 'POST'])]
-    public function new(Request $request, EntityManagerInterface $entityManager): Response
+    public function new(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $membre = new Membre();
         $form = $this->createForm(MembreType::class, $membre);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // 👇 AJOUT : On crypte le mot de passe à la création
+            $plainPassword = $form->get('plainPassword')->getData();
+            if ($plainPassword) {
+                $hashedPassword = $passwordHasher->hashPassword($membre, $plainPassword);
+                $membre->setPassword($hashedPassword);
+            }
+
             $entityManager->persist($membre);
             $entityManager->flush();
 
@@ -52,12 +59,22 @@ final class MembreController extends AbstractController
     }
 
     #[Route('/{id}/edit', name: 'app_membre_edit', methods: ['GET', 'POST'])]
-    public function edit(Request $request, Membre $membre, EntityManagerInterface $entityManager): Response
+    public function edit(Request $request, Membre $membre, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher): Response
     {
         $form = $this->createForm(MembreType::class, $membre);
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
+            // 👇 AJOUT : On vérifie si un nouveau mot de passe a été saisi
+            $plainPassword = $form->get('plainPassword')->getData();
+
+            // Si oui, on le hache et on le met à jour
+            if ($plainPassword) {
+                $hashedPassword = $passwordHasher->hashPassword($membre, $plainPassword);
+                $membre->setPassword($hashedPassword);
+            }
+            // Si non, on ne touche pas au mot de passe actuel
+
             $entityManager->flush();
 
             return $this->redirectToRoute('app_membre_index', [], Response::HTTP_SEE_OTHER);

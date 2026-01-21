@@ -3,33 +3,80 @@
 {% block title %}Inscription{% endblock %}
 
 {% block body %}
-<div class="container mt-5">
-    <h1>Inscription</h1>
+<div class="container mt-5 mb-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            
+            {# Début de la Carte #}
+            <div class="card shadow-lg border-0 rounded-lg">
+                <div class="card-header bg-primary text-white text-center py-4">
+                    <h3 class="mb-0 font-weight-light">Créer un compte</h3>
+                </div>
+                
+                <div class="card-body p-5">
+                    {{ form_start(registrationForm) }}
+                        
+                        {# --- Ligne 1 : Identité --- #}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form_row(registrationForm.nom, {
+                                    'attr': {'placeholder': 'Ex: Dupont'}
+                                }) }}
+                            </div>
+                            <div class="col-md-6">
+                                {{ form_row(registrationForm.prenom, {
+                                    'attr': {'placeholder': 'Ex: Jean'}
+                                }) }}
+                            </div>
+                        </div>
 
-    {{ form_start(registrationForm) }}
-        
-        {# Login #}
-        {{ form_row(registrationForm.login) }}
+                        {# --- Ligne 2 : Identifiants --- #}
+                        <div class="row mb-3">
+                            <div class="col-md-6">
+                                {{ form_row(registrationForm.login, {
+                                    'label': "Nom d'utilisateur",
+                                    'attr': {'placeholder': 'Ex: jdupont'}
+                                }) }}
+                            </div>
+                            <div class="col-md-6">
+                                {# ✅ J'ai rajouté l'email ici #}
+                                {{ form_row(registrationForm.email, {
+                                    'attr': {'placeholder': 'exemple@mail.com'}
+                                }) }}
+                            </div>
+                        </div>
 
-        {# Nom et Prénom (Sur la même ligne pour faire joli) #}
-        <div class="row">
-            <div class="col-md-6">
-                {{ form_row(registrationForm.nom) }}
+                        {# --- Ligne 3 : Rôle --- #}
+                        <div class="mb-3">
+                            {{ form_row(registrationForm.role) }}
+                        </div>
+
+                        {# --- Ligne 4 : Mot de passe --- #}
+                        <div class="mb-4">
+                            {{ form_row(registrationForm.plainPassword, {
+                                label: 'Mot de passe',
+                                attr: {'placeholder': '******'}
+                            }) }}
+                            <small class="text-muted">Le mot de passe doit contenir au moins 6 caractères.</small>
+                        </div>
+
+                        {# Bouton Pleine Largeur #}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">S'inscrire</button>
+                        </div>
+
+                    {{ form_end(registrationForm) }}
+                </div>
+                
+                <div class="card-footer text-center py-3">
+                    <div class="small">
+                        <a href="{{ path('app_login') }}">Vous avez déjà un compte ? Connectez-vous</a>
+                    </div>
+                </div>
             </div>
-            <div class="col-md-6">
-                {{ form_row(registrationForm.prenom) }}
-            </div>
+            {# Fin de la Carte #}
+
         </div>
-
-        {# Le choix du Rôle #}
-        {{ form_row(registrationForm.role) }}
-
-        {# Mot de passe #}
-        {{ form_row(registrationForm.plainPassword, {
-            label: 'Mot de passe'
-        }) }}
-
-        <button type="submit" class="btn btn-primary mt-3">S'inscrire</button>
-    {{ form_end(registrationForm) }}
+    </div>
 </div>
 {% endblock %}

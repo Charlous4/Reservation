@@ -127,4 +127,19 @@ class Membre implements UserInterface, PasswordAuthenticatedUserInterface
 
         return $this;
     }
+    #[ORM\Column(length: 180, unique: true)]
+    private ?string $email = null;
+
+    // 👇 Les Getters et Setters pour l'email
+    public function getEmail(): ?string
+    {
+        return $this->email;
+    }
+
+    public function setEmail(string $email): static
+    {
+        $this->email = $email;
+
+        return $this;
+    }
 }

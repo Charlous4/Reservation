@@ -14,6 +14,7 @@ use Symfony\Component\Validator\Constraints\NotBlank;
 use App\Entity\Roles; // 👈 Vérifie si ta classe s'appelle Role ou Roles
     use Symfony\Bridge\Doctrine\Form\Type\EntityType;
     use Symfony\Component\Form\Extension\Core\Type\TextType;
+    use Symfony\Component\Form\Extension\Core\Type\EmailType;
 
 class RegistrationFormType extends AbstractType
 {
@@ -21,7 +22,9 @@ class RegistrationFormType extends AbstractType
     {
         $builder
             ->add('login') // Ton identifiant
-            
+            ->add('email', EmailType::class, [
+            'label' => 'Adresse Email',
+        ])
             // 👇 AJOUTE LE NOM ET PRÉNOM (Indispensable pour un Membre)
             ->add('nom', TextType::class, [
                 'label' => 'Nom'
