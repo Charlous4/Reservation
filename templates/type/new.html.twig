@@ -1,0 +1,17 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Nouveau Type{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-tag me-2"></i> Ajouter un type</h5>
+        <a href="{{ path('app_type_index') }}" class="btn btn-ghost">
+            <i class="bi bi-arrow-left"></i> Retour
+        </a>
+    </div>
+    <div class="card-body">
+        {{ include('type/_form.html.twig', {'button_label': 'Ajouter'}) }}
+    </div>
+</div>
+{% endblock %}

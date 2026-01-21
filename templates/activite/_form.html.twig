@@ -1,0 +1,61 @@
+{{ form_start(form, {'attr': {'class': 'row g-3'}}) }}
+
+    {# Nom de l'activité #}
+    <div class="col-md-6">
+        {{ form_row(form.nom, {
+            label: 'Nom',
+            attr: {'class': 'form-control', 'placeholder': 'Ex : Yoga, Football...'}
+        }) }}
+    </div>
+
+    {# Capacité maximale #}
+    <div class="col-md-6">
+        {{ form_row(form.capaciteMax, {
+            label: 'Capacité max',
+            attr: {'class': 'form-control', 'min': 1}
+        }) }}
+    </div>
+
+    {# Description #}
+    <div class="col-12">
+        {{ form_row(form.description, {
+            label: 'Description',
+            attr: {'class': 'form-control', 'rows': 3, 'placeholder': 'Décris brièvement l’activité'}
+        }) }}
+    </div>
+
+    {# Prix #}
+    <div class="col-md-6">
+        {{ form_row(form.prix, {
+            label: 'Prix (€)',
+            attr: {'class': 'form-control', 'step': '0.01'}
+        }) }}
+    </div>
+
+    {# Niveau de difficulté #}
+    <div class="col-md-6">
+        {{ form_row(form.nvDifficulte, {
+            label: 'Niveau de difficulté',
+            attr: {'class': 'form-control', 'placeholder': 'Ex : 1 Facile, 2 Intermédiaire,  3 Avancé'}
+        }) }}
+    </div>
+
+    {# Type d'activité #}
+    <div class="col-md-6">
+        {{ form_row(form.type, {
+            label: 'Type',
+            attr: {'class': 'form-select'}
+        }) }}
+    </div>
+
+    {# Boutons d'action #}
+    <div class="d-flex justify-content-end gap-2 mt-3">
+        <a href="{{ path('app_activite_index') }}" class="btn btn-ghost">
+            <i class="bi bi-x-circle"></i> Annuler
+        </a>
+        <button class="btn btn-primary">
+            <i class="bi bi-check-circle"></i> {{ button_label|default('Enregistrer') }}
+        </button>
+    </div>
+
+{{ form_end(form) }}

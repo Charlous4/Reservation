@@ -1,0 +1,44 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails de l’Activité{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-activity me-2"></i> Activité #{{ activite.id }}</h5>
+        <div class="d-flex gap-2">
+            <a href="{{ path('app_activite_edit', {'id': activite.id}) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            {{ include('activite/_delete_form.html.twig') }}
+            <a href="{{ path('app_activite_index') }}" class="btn btn-ghost">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <h6 class="text-muted">Nom</h6>
+                <p class="fw-semibold">{{ activite.nom }}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Capacité maximale</h6>
+                <p>{{ activite.capaciteMax }}</p>
+            </div>
+            <div class="col-12">
+                <h6 class="text-muted">Description</h6>
+                <p>{{ activite.description }}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Prix</h6>
+                <p>{{ activite.prix }} €</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Niveau de difficulté</h6>
+                <p>{{ activite.nvDifficulte }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,48 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Membre{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-person-circle me-2"></i> Membre #{{ membre.id }}</h5>
+        <div class="d-flex gap-2">
+            <a href="{{ path('app_membre_edit', {'id': membre.id}) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            {{ include('membre/_delete_form.html.twig') }}
+            <a href="{{ path('app_membre_index') }}" class="btn btn-ghost">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row g-4">
+            <div class="col-md-6">
+                <h6 class="text-muted">Nom</h6>
+                <p class="fw-semibold">{{ membre.nom }}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Prénom</h6>
+                <p class="fw-semibold">{{ membre.prenom }}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Identifiant</h6>
+                <p>{{ membre.login }}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Email</h6>
+                <p>{{ membre.mail }}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Téléphone</h6>
+                <p>{{ membre.numTel }}</p>
+            </div>
+            <div class="col-md-6">
+                <h6 class="text-muted">Rôle</h6>
+                <p>{{ membre.role.lib }}</p>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
