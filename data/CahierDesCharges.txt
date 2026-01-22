@@ -1,1 +1,1 @@
-
+Faire en sorte que dans Inscription on ne puisse pas ce mettre en administrateur, et que une fois coo en administrateur dans le register on puisse le faire jsp si ta capté chackal
