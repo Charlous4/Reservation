@@ -17,28 +17,42 @@
         </div>
     </div>
     <div class="card-body">
-        <div class="row g-4">
-            <div class="col-md-6">
-                <h6 class="text-muted">Nom</h6>
-                <p class="fw-semibold">{{ activite.nom }}</p>
-            </div>
-            <div class="col-md-6">
-                <h6 class="text-muted">Capacité maximale</h6>
-                <p>{{ activite.capaciteMax }}</p>
-            </div>
-            <div class="col-12">
-                <h6 class="text-muted">Description</h6>
-                <p>{{ activite.description }}</p>
-            </div>
-            <div class="col-md-6">
-                <h6 class="text-muted">Prix</h6>
-                <p>{{ activite.prix }} €</p>
-            </div>
-            <div class="col-md-6">
-                <h6 class="text-muted">Niveau de difficulté</h6>
-                <p>{{ activite.nvDifficulte }}</p>
-            </div>
+    <div class="row g-4">
+        
+        {# --- Ligne 1 : Nom et Type --- #}
+        <div class="col-md-6">
+            <h6 class="text-muted">Nom</h6>
+            <p class="fw-semibold">{{ activite.nom }}</p>
         </div>
+        <div class="col-md-6">
+            <h6 class="text-muted">Type</h6>
+            {# J'ai ajouté un badge pour que ce soit joli, tu peux l'enlever si tu n'aimes pas #}
+            <p><span class="badge bg-info text-dark">{{ activite.type.lib }}</span></p>
+        </div>
+
+        {# --- Ligne 2 : Capacité et Prix --- #}
+        <div class="col-md-6">
+            <h6 class="text-muted">Capacité maximale</h6>
+            <p>{{ activite.capaciteMax }} personnes</p>
+        </div>
+        <div class="col-md-6">
+            <h6 class="text-muted">Prix</h6>
+            <p>{{ activite.prix }} €</p>
+        </div>
+
+        {# --- Ligne 3 : Difficulté --- #}
+        <div class="col-12">
+            <h6 class="text-muted">Niveau de difficulté</h6>
+            <p>{{ activite.nvDifficulte }}</p>
+        </div>
+
+        {# --- Ligne 4 : Description (Tout en bas) --- #}
+        <div class="col-12">
+            <h6 class="text-muted">Description</h6>
+            <p class="p-3 bg-light rounded border">{{ activite.description }}</p>
+        </div>
+
     </div>
+</div>
 </div>
 {% endblock %}
