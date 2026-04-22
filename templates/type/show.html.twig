@@ -1,0 +1,24 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Détails du Type{% endblock %}
+
+{% block body %}
+<div class="card mb-4">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-tag me-2"></i> Type #{{ type.id }}</h5>
+        <div class="d-flex gap-2">
+            <a href="{{ path('app_type_edit', {'id': type.id}) }}" class="btn btn-warning">
+                <i class="bi bi-pencil"></i> Modifier
+            </a>
+            {{ include('type/_delete_form.html.twig') }}
+            <a href="{{ path('app_type_index') }}" class="btn btn-ghost">
+                <i class="bi bi-arrow-left"></i> Retour
+            </a>
+        </div>
+    </div>
+    <div class="card-body">
+        <h6 class="text-muted">Libellé</h6>
+        <p class="fw-semibold">{{ type.lib }}</p>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>{% block title %}Mon Application{% endblock %}</title>
+        
+        {# Favicon #}
+        <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 128 128%22><text y=%221.2em%22 font-size=%2296%22>⚡️</text></svg>">
+        
+        {# Google Fonts: Inter (Standard moderne) #}
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+        
+        {# Bootstrap 5 CSS #}
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        
+        {# Bootstrap Icons #}
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+        
+        <style>
+            :root {
+                /* Palette Modern SaaS (Indigo/Slate) */
+                --primary: #4F46E5;       /* Indigo 600 */
+                --primary-hover: #4338ca; /* Indigo 700 */
+                --secondary: #64748b;     /* Slate 500 */
+                --bg-body: #F3F4F6;       /* Gray 100 */
+                --surface: #ffffff;
+                --text-main: #111827;     /* Gray 900 */
+                --text-muted: #6b7280;    /* Gray 500 */
+                --border-color: #e5e7eb;  /* Gray 200 */
+                --radius-md: 0.75rem;
+                --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
+                --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            }
+
+            body {
+                font-family: 'Inter', system-ui, -apple-system, sans-serif;
+                background-color: var(--bg-body);
+                color: var(--text-main);
+                min-height: 100vh;
+                display: flex;
+                flex-direction: column;
+                -webkit-font-smoothing: antialiased;
+            }
+
+            /* --- Navbar Moderne --- */
+            .navbar {
+                background-color: var(--surface);
+                border-bottom: 1px solid var(--border-color);
+                padding: 0.75rem 0;
+            }
+            
+            .navbar-brand {
+                font-weight: 700;
+                color: var(--primary) !important;
+                font-size: 1.25rem;
+                letter-spacing: -0.025em;
+            }
+
+            .nav-link {
+                color: var(--text-muted) !important;
+                font-weight: 500;
+                font-size: 0.95rem;
+                padding: 0.5rem 1rem !important;
+                border-radius: 0.5rem;
+                transition: all 0.2s;
+            }
+
+            .nav-link:hover, .nav-link.active {
+                color: var(--primary) !important;
+                background-color: #EEF2FF; /* Light Indigo bg */
+            }
+
+            /* --- Layout --- */
+            .main-content {
+                flex: 1;
+                padding: 2.5rem 0;
+            }
+
+            /* --- Cartes & Conteneurs --- */
+            .card {
+                background: var(--surface);
+                border: 1px solid var(--border-color);
+                border-radius: var(--radius-md);
+                box-shadow: var(--shadow-sm);
+                overflow: hidden; /* Important pour les tableaux */
+            }
+
+            .card-header {
+                background: transparent;
+                border-bottom: 1px solid var(--border-color);
+                padding: 1.25rem 1.5rem;
+                font-weight: 600;
+            }
+
+            /* --- Tableaux Modernes --- */
+            .table {
+                margin-bottom: 0;
+            }
+            
+            .table thead th {
+                background-color: #F9FAFB; /* Gray 50 */
+                color: var(--text-muted);
+                font-weight: 600;
+                text-transform: uppercase;
+                font-size: 0.75rem;
+                letter-spacing: 0.05em;
+                border-bottom: 1px solid var(--border-color);
+                padding: 1rem 1.5rem;
+            }
+
+            .table tbody td {
+                padding: 1rem 1.5rem;
+                vertical-align: middle;
+                color: var(--text-main);
+                border-bottom: 1px solid var(--border-color);
+                font-size: 0.95rem;
+            }
+
+            .table tr:last-child td {
+                border-bottom: none;
+            }
+
+            .table-hover tbody tr:hover {
+                background-color: #F9FAFB;
+            }
+
+            /* --- Boutons --- */
+            .btn {
+                font-weight: 500;
+                padding: 0.5rem 1rem;
+                border-radius: 0.5rem;
+                transition: all 0.2s;
+                display: inline-flex;
+                align-items: center;
+                gap: 0.5rem;
+            }
+
+            .btn-primary {
+                background-color: var(--primary);
+                border-color: var(--primary);
+                box-shadow: 0 1px 2px 0 rgba(79, 70, 229, 0.4);
+            }
+
+            .btn-primary:hover {
+                background-color: var(--primary-hover);
+                border-color: var(--primary-hover);
+                transform: translateY(-1px);
+            }
+
+            .btn-ghost {
+                background: transparent;
+                color: var(--text-muted);
+                border: 1px solid transparent;
+            }
+            
+            .btn-ghost:hover {
+                background-color: #F3F4F6;
+                color: var(--text-main);
+            }
+
+            /* --- Footer --- */
+            footer {
+                border-top: 1px solid var(--border-color);
+                background: var(--surface);
+                padding: 1.5rem 0;
+                margin-top: auto;
+                color: var(--text-muted);
+                font-size: 0.875rem;
+            }
+        </style>
+        
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+        <link rel="stylesheet" href="{{ asset('style.css') }}">
+        <script src="{{ asset('script.js') }}"></script>
+
+       {# Navbar Blanche Épurée #}
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="container">
+                <a class="navbar-brand" href="/">
+                    <i class="bi bi-activity"></i> SportResa
+                </a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+                <div class="collapse navbar-collapse" id="navbarNav">
+                    <ul class="navbar-nav ms-auto align-items-center">
+                        
+                        {# CAS 1 : L'UTILISATEUR EST CONNECTÉ #}
+                        {% if app.user %}
+                            <li class="nav-item"><a class="nav-link" href="/">Accueil</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_session_index') }}">Sessions</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_membre_index') }}">Membres</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_activite_index') }}">Activités</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_roles_index') }}">Rôles</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_type_index') }}">Types</a></li>              
+                            
+                            <li class="nav-item ms-lg-3">
+                                <a class="btn btn-outline-danger btn-sm" href="{{ path('app_logout') }}">Déconnexion</a>
+                            </li>
+
+                        {# CAS 2 : L'UTILISATEUR N'EST PAS CONNECTÉ (VISITEUR) #}
+                        {% else %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_login') }}">Connexion</a>
+                            </li>
+                            <li class="nav-item ms-lg-2">
+                                {# 👇 C'est ici ton bouton Inscription #}
+                                <a class="btn btn-primary btn-sm" href="{{ path('app_register') }}">Inscription</a>
+                            </li>
+                        {% endif %}
+
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        {# Flash Messages (Toast Style) #}
+        <div class="container mt-4">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label }} alert-dismissible fade show shadow-sm border-0" role="alert" 
+                         style="background-color: var(--surface); border-left: 4px solid var(--{{ label == 'error' ? 'danger' : 'success' }});">
+                        <div class="d-flex align-items-center">
+                            <i class="bi bi-{{ label == 'success' ? 'check-circle-fill' : 'exclamation-triangle-fill' }} me-2 text-{{ label }}"></i>
+                            <span>{{ message }}</span>
+                        </div>
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+        </div>
+
+        <main class="main-content">
+            <div class="container">
+                {% block body %}{% endblock %}
+            </div>
+        </main>
+
+        <footer class="text-center">
+            <div class="container">
+                <p class="mb-0">
+                    &copy; {{ 'now'|date('Y') }} SportResa. Fait avec <i class="bi bi-heart-fill text-danger mx-1"></i> et Symfony.
+                </p>
+            </div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

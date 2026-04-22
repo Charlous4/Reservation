@@ -1,0 +1,198 @@
+/* --- Global --- */
+body {
+  background-color: #f8f9fa;
+  color: #212529;
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+
+body.dark-mode {
+  background-color: #121212;
+  color: #e0e0e0;
+}
+
+/* --- Navbar --- */
+body.dark-mode nav.navbar {
+  background-color: #1f1f1f !important;
+  border-bottom: 1px solid #333;
+}
+body.dark-mode .navbar a,
+body.dark-mode .navbar-brand,
+body.dark-mode .navbar-nav .nav-link {
+  color: #e0e0e0 !important;
+}
+body.dark-mode .navbar a:hover {
+  color: #ffc107 !important;
+}
+
+/* --- Table --- */
+body.dark-mode .table {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+}
+body.dark-mode .table thead th {
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+}
+body.dark-mode .table-hover tbody tr:hover {
+  background-color: #2f2f2f;
+}
+body.dark-mode .table td {
+  border-color: #444;
+}
+
+/* --- Cards --- */
+.card {
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+.card:hover {
+  transform: translateY(-5px) scale(1.02);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+}
+body.dark-mode .card {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  box-shadow: 0 4px 12px rgba(255,255,255,0.1);
+}
+
+/* --- Buttons --- */
+.btn-primary {
+  background: linear-gradient(90deg, #007bff, #0056b3);
+  border: none;
+}
+.btn-primary:hover {
+  background: linear-gradient(90deg, #0056b3, #004085);
+}
+body.dark-mode .btn-primary {
+  background: linear-gradient(90deg, #00c6ff, #0072ff);
+}
+
+.btn-warning {
+  background: linear-gradient(90deg, #ffc107, #e0a800);
+  border: none;
+}
+.btn-warning:hover {
+  background: linear-gradient(90deg, #e0a800, #c69500);
+}
+body.dark-mode .btn-warning {
+  background: linear-gradient(90deg, #ff8800, #cc6600);
+  color: #fff;
+}
+
+.btn-ghost {
+  background: transparent;
+  border: none;
+  color: #6c757d;
+  transition: color 0.3s;
+}
+.btn-ghost:hover {
+  color: #000;
+}
+body.dark-mode .btn-ghost {
+  color: #ccc;
+}
+body.dark-mode .btn-ghost:hover {
+  color: #fff;
+}
+
+/* --- Switch Universe.io --- */
+.switch {
+  font-size: 17px;
+  position: fixed;
+  top: 1rem;
+  right: 1rem;
+  display: inline-block;
+  width: 3.5em;
+  height: 2em;
+  z-index: 9999;
+}
+
+.switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.slider {
+  --background: #28096b;
+  position: absolute;
+  cursor: pointer;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background-color: var(--background);
+  transition: .5s;
+  border-radius: 30px;
+}
+
+.slider:before {
+  position: absolute;
+  content: "🌞"; /* Soleil par défaut */
+  height: 1.4em;
+  width: 1.4em;
+  border-radius: 50%;
+  left: 10%;
+  bottom: 15%;
+  background: var(--background);
+  transition: .5s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+input:checked + .slider {
+  background-color: #522ba7;
+}
+
+input:checked + .slider:before {
+  transform: translateX(100%);
+  content: "🌙"; /* Lune quand dark mode */
+}
+/* --- Titres du tableau (thead) --- */
+body.dark-mode .table thead th {
+  background-color: #2a2a2a;
+  color: #f0f0f0;
+}
+
+/* --- Lignes du tableau (tbody) --- */
+body.dark-mode .table tbody td {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+/* --- Hover sur les lignes --- */
+body.dark-mode .table-hover tbody tr:hover td {
+  background-color: #2f2f2f;
+}
+
+/* --- Boutons dans les lignes (déjà OK) --- */
+body.dark-mode .btn-warning,
+body.dark-mode .btn-ghost {
+  color: #fff;
+}
+/* --- Titres du tableau (thead) --- */
+body.dark-mode .table thead th {
+  background-color: #2a2a2a;
+  color: #f0f0f0 !important;
+}
+
+/* --- Lignes du tableau (tbody) --- */
+body.dark-mode .table tbody td {
+  background-color: #1e1e1e;
+  color: #e0e0e0;
+  border-color: #444;
+}
+
+/* --- Hover sur les lignes --- */
+body.dark-mode .table-hover tbody tr:hover td {
+  background-color: #2f2f2f;
+}
+
+/* --- Footer --- */
+footer {
+  transition: background-color 0.5s ease, color 0.5s ease;
+}
+body.dark-mode footer {
+  background-color: #1f1f1f;
+  color: #e0e0e0;
+}
