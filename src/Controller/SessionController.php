@@ -10,6 +10,11 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Entity\Inscrire;
+use App\Repository\InscrireRepository;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
+
+
 
 #[Route('/session')]
 final class SessionController extends AbstractController
@@ -41,7 +46,58 @@ final class SessionController extends AbstractController
             'form' => $form,
         ]);
     }
+                    #[Route('/calendar', name: 'app_session_calendar', methods: ['GET'])]
+        public function calendar(SessionRepository $sessionRepository, InscrireRepository $inscrireRepository): Response
+        {
+            $sessions = $sessionRepository->findAll();
+            $user = $this->getUser();
 
+            $events = [];
+            foreach ($sessions as $session) {
+                $start = \DateTime::createFromFormat(
+                    'Y-m-d H:i:s',
+                    $session->getDateDeb()->format('Y-m-d') . ' ' . $session->getHeureDeb()->format('H:i:s')
+                );
+                $end = \DateTime::createFromFormat(
+                    'Y-m-d H:i:s',
+                    $session->getDateFin()->format('Y-m-d') . ' ' . $session->getHeureFin()->format('H:i:s')
+                );
+
+                $placesRestantes = $session->getNbPlace() - count($session->getInscrires());
+
+                // Liste des participants
+                $participants = [];
+                foreach ($session->getInscrires() as $inscrire) {
+                    $m = $inscrire->getMembre();
+                    $participants[] = $m->getPrenom() . ' ' . $m->getNom();
+                }
+
+                // Est-ce que l'user courant est inscrit ?
+                $dejainscrit = false;
+                if ($user) {
+                    $dejainscrit = $inscrireRepository->findOneBy([
+                        'membre' => $user,
+                        'session' => $session,
+                    ]) !== null;
+                }
+
+                $events[] = [
+                    'id'              => $session->getId(),
+                    'title'           => $session->getActivite()?->getNom() ?? 'Sans activité',
+                    'start'           => $start->format('Y-m-d\TH:i:s'),
+                    'end'             => $end->format('Y-m-d\TH:i:s'),
+                    'placesTotal'     => $session->getNbPlace(),
+                    'placesRestantes' => $placesRestantes,
+                    'participants'    => $participants,
+                    'dejaInscrit'     => $dejainscrit,
+                    'color'           => $placesRestantes <= 0 ? '#dc3545' : ($placesRestantes <= 3 ? '#fd7e14' : '#198754'),
+                ];
+            }
+
+            return $this->render('session/calendar.html.twig', [
+                'events' => json_encode($events),
+            ]);
+        }
     #[Route('/{id}', name: 'app_session_show', methods: ['GET'])]
     public function show(Session $session): Response
     {
@@ -78,4 +134,64 @@ final class SessionController extends AbstractController
 
         return $this->redirectToRoute('app_session_index', [], Response::HTTP_SEE_OTHER);
     }
+
+
+    #[Route('/{id}/reserver', name: 'app_session_reserver', methods: ['POST'])]
+#[IsGranted('ROLE_USER')]
+public function reserver(Session $session, EntityManagerInterface $entityManager, InscrireRepository $inscrireRepository): Response
+{
+    $membre = $this->getUser();
+
+    // Vérifier si déjà inscrit
+    $dejaInscrit = $inscrireRepository->findOneBy([
+        'membre' => $membre,
+        'session' => $session,
+    ]);
+
+    if ($dejaInscrit) {
+        $this->addFlash('warning', 'Vous êtes déjà inscrit à cette session.');
+        return $this->redirectToRoute('app_session_calendar');
+    }
+
+    // Vérifier s'il reste des places
+    $nbInscrits = count($session->getInscrires());
+    if ($nbInscrits >= $session->getNbPlace()) {
+        $this->addFlash('danger', 'Plus de places disponibles.');
+        return $this->redirectToRoute('app_session_calendar');
+    }
+
+    $inscrire = new Inscrire();
+    $inscrire->setMembre($membre);
+    $inscrire->setSession($session);
+
+    $entityManager->persist($inscrire);
+    $entityManager->flush();
+
+    $this->addFlash('success', 'Réservation confirmée !');
+    return $this->redirectToRoute('app_session_calendar');
+}
+
+
+#[Route('/{id}/annuler', name: 'app_session_annuler', methods: ['POST'])]
+#[IsGranted('ROLE_USER')]
+public function annuler(Session $session, EntityManagerInterface $entityManager, InscrireRepository $inscrireRepository): Response
+{
+    $membre = $this->getUser();
+
+    $inscrire = $inscrireRepository->findOneBy([
+        'membre' => $membre,
+        'session' => $session,
+    ]);
+
+    if ($inscrire) {
+        $entityManager->remove($inscrire);
+        $entityManager->flush();
+        $this->addFlash('success', 'Réservation annulée.');
+    } else {
+        $this->addFlash('warning', 'Vous n\'êtes pas inscrit à cette session.');
+    }
+
+    return $this->redirectToRoute('app_session_calendar');
+}
+
 }

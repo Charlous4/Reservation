@@ -1,0 +1,147 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Calendrier des sessions{% endblock %}
+
+{% block stylesheets %}
+    <link href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css" rel="stylesheet">
+    <style>
+        #modal-overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        #modal-overlay.active { display: flex; }
+        #modal-box {
+            background: white;
+            border-radius: 12px;
+            padding: 2rem;
+            min-width: 320px;
+            max-width: 480px;
+            width: 90%;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-calendar3 me-2"></i> Calendrier des sessions</h5>
+        <a href="{{ path('app_session_index') }}" class="btn btn-outline-secondary">
+            <i class="bi bi-list"></i> Vue liste
+        </a>
+    </div>
+    <div class="card-body">
+        <div id="calendar"></div>
+    </div>
+</div>
+
+{# Modal réservation - UN SEUL bloc #}
+<div id="modal-overlay">
+    <div id="modal-box">
+        <h5 id="modal-title" class="mb-3"></h5>
+        <p id="modal-places" class="mb-1"></p>
+        <p id="modal-horaires" class="text-muted small mb-2"></p>
+        <div id="modal-participants"></div>
+        <div id="modal-actions" class="d-flex gap-2 justify-content-end mt-3">
+            <button class="btn btn-outline-secondary" onclick="closeModal()">Fermer</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+<script>
+const isLoggedIn = {{ app.user ? 'true' : 'false' }};
+const isAdmin = {{ is_granted('ROLE_ADMIN') ? 'true' : 'false' }};
+
+document.addEventListener('DOMContentLoaded', function () {
+    const calendar = new FullCalendar.Calendar(document.getElementById('calendar'), {
+        initialView: 'dayGridMonth',
+        locale: 'fr',
+        headerToolbar: {
+            left: 'prev,next today',
+            center: 'title',
+            right: 'dayGridMonth,timeGridWeek,timeGridDay'
+        },
+        events: {{ events|raw }},
+        eventClick: function(info) {
+            info.jsEvent.preventDefault();
+            const e = info.event;
+            const pr = e.extendedProps.placesRestantes;
+            const pt = e.extendedProps.placesTotal;
+            const participants = e.extendedProps.participants;
+            const dejaInscrit = e.extendedProps.dejaInscrit;
+
+            document.getElementById('modal-title').textContent = e.title;
+            document.getElementById('modal-horaires').textContent =
+                e.start.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}) + ' - ' +
+                (e.end ? e.end.toLocaleTimeString('fr-FR', {hour:'2-digit', minute:'2-digit'}) : '');
+
+            // Places
+            const placesEl = document.getElementById('modal-places');
+            placesEl.innerHTML = pr <= 0
+                ? '<span class="badge bg-danger">Complet</span>'
+                : `<span class="badge bg-success">${pr} / ${pt} places disponibles</span>`;
+
+            // Participants (visible par tous)
+            const participantsEl = document.getElementById('modal-participants');
+            if (participants.length > 0) {
+                participantsEl.innerHTML = `
+                    <p class="text-muted small mb-1 mt-3"><i class="bi bi-people me-1"></i><strong>Participants :</strong></p>
+                    <ul class="list-unstyled ms-2 small">
+                        ${participants.map(p => `<li><i class="bi bi-person me-1"></i>${p}</li>`).join('')}
+                    </ul>`;
+            } else {
+                participantsEl.innerHTML = '<p class="text-muted small mt-3">Aucun participant pour l\'instant.</p>';
+            }
+
+            // Boutons
+            const actions = document.getElementById('modal-actions');
+            actions.innerHTML = '<button class="btn btn-outline-secondary" onclick="closeModal()">Fermer</button>';
+
+            if (isLoggedIn && !isAdmin) {
+                if (dejaInscrit) {
+                    // Bouton annuler
+                    const formAnnuler = document.createElement('form');
+                    formAnnuler.method = 'POST';
+                    formAnnuler.action = `/session/${e.id}/annuler`;
+                    formAnnuler.innerHTML = `
+                        <input type="hidden" name="_token" value="{{ csrf_token('reserve') }}">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="bi bi-x-circle"></i> Annuler ma réservation
+                        </button>`;
+                    actions.appendChild(formAnnuler);
+                } else if (pr > 0) {
+                    // Bouton réserver
+                    const formReserver = document.createElement('form');
+                    formReserver.method = 'POST';
+                    formReserver.action = `/session/${e.id}/reserver`;
+                    formReserver.innerHTML = `
+                        <input type="hidden" name="_token" value="{{ csrf_token('reserve') }}">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="bi bi-calendar-check"></i> Réserver
+                        </button>`;
+                    actions.appendChild(formReserver);
+                }
+            }
+
+            document.getElementById('modal-overlay').classList.add('active');
+        }
+    });
+    calendar.render();
+});
+
+function closeModal() {
+    document.getElementById('modal-overlay').classList.remove('active');
+}
+
+document.getElementById('modal-overlay').addEventListener('click', function(e) {
+    if (e.target === this) closeModal();
+});
+</script>
+{% endblock %}
