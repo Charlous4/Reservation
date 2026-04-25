@@ -80,8 +80,8 @@ CREATE UNIQUE INDEX membre_email_key ON public.membre USING btree (email);
 
 INSERT INTO "membre" ("id", "nom", "prenom", "login", "roles", "password", "role_id", "email") VALUES
 (10,	'admin',	'admin',	'admin',	'["ROLE_ADMIN"]',	'$2y$13$F.O17Fb4qTvUeCaNZ2GYBehTN/QZqau3pYTYUqV872I9OsfGEDMy.',	3,	'admin@admin.fr'),
-(12,	'RAMBEAU',	'Tristan',	'trambeau',	'["ROLE_UTILISATEUR"]',	'$2y$13$eWZAq.GUahjNBpBlFgTNmewsuFWjH7iG7Bz5Jz9mi3JLt6cZfDsRa',	2,	'sdfkjn'),
-(13,	'RUBIO',	'Charles',	'crubio',	 E'["ROLE_ENTRA\\u00ceNEUR"]',	'$2y$13$KYJs58Kpk7QXtPfIpdx1Feci5Zml9qjmNuaXQCwQFAHPahBV518LO',	1,	'crubio');
+(14,	'RUBIO',	'Charles',	'crubio',	'["ROLE_ENTRAINEUR"]',	'$2y$13$ggJIHIV4M3pv9djp0Xwcq.pwrgZQEwtUfJzacy0u2372a7slZwtWO',	1,	'charles@mail.com'),
+(12,	'RAMBEAU',	'Tristan',	'trambeau',	'["ROLE_UTILISATEUR"]',	'$2y$13$eWZAq.GUahjNBpBlFgTNmewsuFWjH7iG7Bz5Jz9mi3JLt6cZfDsRa',	2,	'rambeau@mail.fr');
 
 DROP TABLE IF EXISTS "roles";
 DROP SEQUENCE IF EXISTS roles_id_seq;
@@ -143,4 +143,4 @@ ALTER TABLE ONLY "public"."membre" ADD CONSTRAINT "membre_role_id_fkey" FOREIGN 
 ALTER TABLE ONLY "public"."session" ADD CONSTRAINT "session_activite_id_fkey" FOREIGN KEY (activite_id) REFERENCES activite(id) NOT DEFERRABLE;
 ALTER TABLE ONLY "public"."session" ADD CONSTRAINT "session_entraineur_id_fkey" FOREIGN KEY (entraineur_id) REFERENCES membre(id) NOT DEFERRABLE;
 
--- 2026-04-24 19:28:28 UTC
+-- 2026-04-25 20:14:40 UTC

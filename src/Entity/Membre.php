@@ -126,24 +126,25 @@ class Membre implements UserInterface, PasswordAuthenticatedUserInterface
 
     // Notre fameux setRole unique avec la synchronisation !
     public function setRole(?Roles $role): static
-    {
-        $this->role = $role;
+{
+    $this->role = $role;
 
-        // Dès qu'on donne un rôle au membre, on remplit les fameux crochets [] de Symfony !
-        if ($role) {
-            $libelle = strtoupper($role->getLib()); 
-            
-            if ($libelle === 'ADMIN' || $libelle === 'ADMINISTRATEUR') {
-                $this->roles = ['ROLE_ADMIN'];
-            } else {
-                $this->roles = ['ROLE_' . $libelle];
-            }
+    if ($role) {
+        $libelle = mb_strtoupper($role->getLib(), 'UTF-8'); // 👈 mb_strtoupper au lieu de strtoupper
+        
+        if ($libelle === 'ADMIN' || $libelle === 'ADMINISTRATEUR') {
+            $this->roles = ['ROLE_ADMIN'];
+        } elseif ($libelle === 'ENTRAÎNEUR' || $libelle === 'ENTRAINEUR') {
+            $this->roles = ['ROLE_ENTRAINEUR']; // 👈 forcé sans accent
         } else {
-            $this->roles = [];
+            $this->roles = ['ROLE_' . $libelle];
         }
-
-        return $this;
+    } else {
+        $this->roles = [];
     }
+
+    return $this;
+}
 
     public function getPassword(): string
     {
