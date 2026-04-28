@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Membre;
+use Symfony\Component\Security\Http\Attribute\IsGranted;
 use App\Form\MembreType;
 use App\Repository\MembreRepository;
 use Doctrine\ORM\EntityManagerInterface;
@@ -11,6 +12,7 @@ use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
+use App\Service\MailerService;
 
 #[Route('/membre')]
 final class MembreController extends AbstractController
@@ -96,4 +98,29 @@ final class MembreController extends AbstractController
 
         return $this->redirectToRoute('app_membre_index', [], Response::HTTP_SEE_OTHER);
     }
+
+    #[Route('/admin/email-groupe', name: 'app_admin_email_groupe', methods: ['GET', 'POST'])]
+#[IsGranted('ROLE_ADMIN')]
+public function emailGroupe(Request $request, MembreRepository $membreRepository, MailerService $mailerService): Response
+{
+    if ($request->isMethod('POST')) {
+    $sujet = $request->request->get('sujet');
+    $contenu = $request->request->get('contenu');
+
+    // 👇 Remplace uniquement ces lignes
+    $membres = $membreRepository->createQueryBuilder('m')
+        ->leftJoin('m.role', 'r')
+        ->where('r.lib IN (:roles)')
+        ->setParameter('roles', ['Utilisateur', 'Entraîneur'])
+        ->getQuery()
+        ->getResult();
+
+    $mailerService->sendGroupEmail($membres, $sujet, $contenu);
+
+    $this->addFlash('success', count($membres) . ' emails envoyés !');
+    return $this->redirectToRoute('app_admin_email_groupe');
+}
+
+    return $this->render('admin/email_groupe.html.twig');
+}
 }

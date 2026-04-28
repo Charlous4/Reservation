@@ -62,7 +62,7 @@ class SessionType extends AbstractType
                         ->leftJoin('m.role', 'r') 
                         ->where('r.lib = :titre') 
                         // 👇 J'ai mis l'accent ici puisque c'était ça le problème !
-                        ->setParameter('titre', 'EntraÎneur') 
+                        ->setParameter('titre', 'Entraîneur')
                         ->orderBy('m.nom', 'ASC');
                 },
             ])

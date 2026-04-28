@@ -199,7 +199,11 @@
                             <li class="nav-item"><a class="nav-link" href="{{ path('app_activite_index') }}">Activités</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ path('app_roles_index') }}">Rôles</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ path('app_type_index') }}">Types</a></li>              
-                            
+                            {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_admin_email_groupe') }}"><i class="bi bi-envelope-fill me-1"></i>Emails groupés</a></li>
+                            {% endif %}
+
+                        
                             <li class="nav-item ms-lg-3">
                                 <a class="btn btn-outline-danger btn-sm" href="{{ path('app_logout') }}">Déconnexion</a>
                             </li>

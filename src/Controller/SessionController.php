@@ -13,6 +13,7 @@ use Symfony\Component\Routing\Attribute\Route;
 use App\Entity\Inscrire;
 use App\Repository\InscrireRepository;
 use Symfony\Component\Security\Http\Attribute\IsGranted;
+use App\Service\MailerService;
 
 
 
@@ -138,22 +139,16 @@ final class SessionController extends AbstractController
 
     #[Route('/{id}/reserver', name: 'app_session_reserver', methods: ['POST'])]
 #[IsGranted('ROLE_USER')]
-public function reserver(Session $session, EntityManagerInterface $entityManager, InscrireRepository $inscrireRepository): Response
+public function reserver(Session $session, EntityManagerInterface $entityManager, InscrireRepository $inscrireRepository, MailerService $mailerService): Response
 {
     $membre = $this->getUser();
 
-    // Vérifier si déjà inscrit
-    $dejaInscrit = $inscrireRepository->findOneBy([
-        'membre' => $membre,
-        'session' => $session,
-    ]);
-
+    $dejaInscrit = $inscrireRepository->findOneBy(['membre' => $membre, 'session' => $session]);
     if ($dejaInscrit) {
         $this->addFlash('warning', 'Vous êtes déjà inscrit à cette session.');
         return $this->redirectToRoute('app_session_calendar');
     }
 
-    // Vérifier s'il reste des places
     $nbInscrits = count($session->getInscrires());
     if ($nbInscrits >= $session->getNbPlace()) {
         $this->addFlash('danger', 'Plus de places disponibles.');
@@ -163,32 +158,32 @@ public function reserver(Session $session, EntityManagerInterface $entityManager
     $inscrire = new Inscrire();
     $inscrire->setMembre($membre);
     $inscrire->setSession($session);
-
     $entityManager->persist($inscrire);
     $entityManager->flush();
 
-    $this->addFlash('success', 'Réservation confirmée !');
+    // 👇 Envoi du mail de confirmation
+    $mailerService->sendConfirmation($membre, $session);
+
+    $this->addFlash('success', 'Réservation confirmée ! Un email vous a été envoyé.');
     return $this->redirectToRoute('app_session_calendar');
 }
 
 
 #[Route('/{id}/annuler', name: 'app_session_annuler', methods: ['POST'])]
 #[IsGranted('ROLE_USER')]
-public function annuler(Session $session, EntityManagerInterface $entityManager, InscrireRepository $inscrireRepository): Response
+public function annuler(Session $session, EntityManagerInterface $entityManager, InscrireRepository $inscrireRepository, MailerService $mailerService): Response
 {
     $membre = $this->getUser();
 
-    $inscrire = $inscrireRepository->findOneBy([
-        'membre' => $membre,
-        'session' => $session,
-    ]);
-
+    $inscrire = $inscrireRepository->findOneBy(['membre' => $membre, 'session' => $session]);
     if ($inscrire) {
         $entityManager->remove($inscrire);
         $entityManager->flush();
-        $this->addFlash('success', 'Réservation annulée.');
-    } else {
-        $this->addFlash('warning', 'Vous n\'êtes pas inscrit à cette session.');
+
+        // 👇 Envoi du mail d'annulation
+        $mailerService->sendAnnulation($membre, $session);
+
+        $this->addFlash('success', 'Réservation annulée. Un email vous a été envoyé.');
     }
 
     return $this->redirectToRoute('app_session_calendar');
