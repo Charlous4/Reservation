@@ -1,0 +1,58 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Planning{% endblock %}
+
+{% block body %}
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0"><i class="bi bi-calendar-week me-2"></i> Mon planning</h5>
+    </div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Activité</th>
+                    <th>Date</th>
+                    <th>Horaires</th>
+                    <th>Places</th>
+                    <th>Inscrits</th>
+                    <th class="text-end">Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for session in sessions %}
+                    <tr>
+                        <td class="fw-semibold">{{ session.activite.nom }}</td>
+                        <td>{{ session.dateDeb|date('d/m/Y') }}</td>
+                        <td>{{ session.heureDeb|date('H:i') }} - {{ session.heureFin|date('H:i') }}</td>
+                        <td>{{ session.nbPlace }}</td>
+                        <td>
+                            <span class="badge bg-{{ session.inscrires|length >= session.nbPlace ? 'danger' : 'success' }}">
+                                {{ session.inscrires|length }} / {{ session.nbPlace }}
+                            </span>
+                        </td>
+                        <td class="text-end">
+                            <a href="{{ path('app_entraineur_session_edit', {'id': session.id}) }}" class="btn btn-warning btn-sm">
+                                <i class="bi bi-pencil"></i> Modifier
+                            </a>
+                            <form method="POST" action="{{ path('app_entraineur_session_annuler', {'id': session.id}) }}" class="d-inline"
+                                  onsubmit="return confirm('Annuler cette session ? Les inscrits seront supprimés.')">
+                                <input type="hidden" name="_token" value="{{ csrf_token('annuler' ~ session.id) }}">
+                                <button type="submit" class="btn btn-danger btn-sm">
+                                    <i class="bi bi-x-circle"></i> Annuler
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <td colspan="6" class="text-center text-muted py-4">
+                            <i class="bi bi-calendar-x fs-4 me-2"></i> Aucune session assignée
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

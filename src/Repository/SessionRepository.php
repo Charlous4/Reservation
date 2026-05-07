@@ -5,7 +5,7 @@ namespace App\Repository;
 use App\Entity\Session;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\Persistence\ManagerRegistry;
-
+use App\Entity\Membre;
 /**
  * @extends ServiceEntityRepository<Session>
  */
@@ -15,6 +15,16 @@ class SessionRepository extends ServiceEntityRepository
     {
         parent::__construct($registry, Session::class);
     }
+
+    public function findByEntraineur(Membre $entraineur): array
+{
+    return $this->createQueryBuilder('s')
+        ->where('s.entraineur = :entraineur')
+        ->setParameter('entraineur', $entraineur)
+        ->orderBy('s.dateDeb', 'ASC')
+        ->getQuery()
+        ->getResult();
+}
 
     //    /**
     //     * @return Session[] Returns an array of Session objects

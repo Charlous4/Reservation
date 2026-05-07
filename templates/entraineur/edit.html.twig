@@ -1,0 +1,28 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modifier la session{% endblock %}
+
+{% block body %}
+<div class="card" style="max-width: 600px; margin: auto;">
+    <div class="card-header">
+        <h5 class="mb-0"><i class="bi bi-pencil me-2"></i> Modifier la session</h5>
+    </div>
+    <div class="card-body">
+        {{ form_start(form) }}
+            {{ form_row(form.nbPlace) }}
+            {{ form_row(form.heureDeb) }}
+            {{ form_row(form.heureFin) }}
+            {{ form_row(form.dateDeb) }}
+            {{ form_row(form.dateFin) }}
+            <div class="d-flex gap-2 mt-3">
+                <button type="submit" class="btn btn-primary">
+                    <i class="bi bi-check-lg"></i> Enregistrer
+                </button>
+                <a href="{{ path('app_entraineur_planning') }}" class="btn btn-ghost">
+                    <i class="bi bi-arrow-left"></i> Retour
+                </a>
+            </div>
+        {{ form_end(form) }}
+    </div>
+</div>
+{% endblock %}

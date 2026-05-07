@@ -200,7 +200,15 @@
                             <li class="nav-item"><a class="nav-link" href="{{ path('app_roles_index') }}">Rôles</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ path('app_type_index') }}">Types</a></li>              
                             {% if is_granted('ROLE_ADMIN') %}
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_stats') }}"><i class="bi bi-bar-chart me-1"></i>Statistiques</a></li>
                             <li class="nav-item"><a class="nav-link" href="{{ path('app_admin_email_groupe') }}"><i class="bi bi-envelope-fill me-1"></i>Emails groupés</a></li>
+                            {% endif %}
+                            {% if is_granted('ROLE_ENTRAINEUR') %}
+                            <li class="nav-item">
+                                <a class="nav-link" href="{{ path('app_entraineur_planning') }}">
+                                    <i class="bi bi-calendar-week me-1"></i> Mon planning
+                                </a>
+                            </li>
                             {% endif %}
 
                         

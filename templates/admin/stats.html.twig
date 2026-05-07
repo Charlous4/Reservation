@@ -1,0 +1,127 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Statistiques{% endblock %}
+
+{% block stylesheets %}
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+{% endblock %}
+
+{% block body %}
+<h4 class="mb-4"><i class="bi bi-bar-chart-fill me-2"></i> Statistiques</h4>
+
+{# Chiffres clés #}
+<div class="row g-3 mb-4">
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <div class="fs-1 fw-bold text-primary">{{ totalMembres }}</div>
+            <div class="text-muted">Membres</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <div class="fs-1 fw-bold text-success">{{ totalSessions }}</div>
+            <div class="text-muted">Sessions</div>
+        </div>
+    </div>
+    <div class="col-md-4">
+        <div class="card text-center p-3">
+            <div class="fs-1 fw-bold text-warning">{{ totalInscrits }}</div>
+            <div class="text-muted">Réservations totales</div>
+        </div>
+    </div>
+</div>
+
+{# Graphique par activité #}
+<div class="card mb-4">
+    <div class="card-header"><i class="bi bi-trophy me-2"></i> Réservations par activité</div>
+    <div class="card-body">
+        <canvas id="chartActivite" height="100"></canvas>
+    </div>
+</div>
+
+{# Graphique par mois #}
+<div class="card mb-4">
+    <div class="card-header"><i class="bi bi-calendar3 me-2"></i> Réservations par mois</div>
+    <div class="card-body">
+        <canvas id="chartMois" height="100"></canvas>
+    </div>
+</div>
+
+{# Tableau taux d'occupation #}
+<div class="card mb-4">
+    <div class="card-header"><i class="bi bi-people me-2"></i> Taux d'occupation des sessions</div>
+    <div class="table-responsive">
+        <table class="table table-hover align-middle mb-0">
+            <thead>
+                <tr>
+                    <th>Activité</th>
+                    <th>Date</th>
+                    <th>Inscrits / Places</th>
+                    <th>Taux</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for row in tauxOccupation %}
+                    {% set taux = row.nbPlace > 0 ? (row.inscrits / row.nbPlace * 100)|round : 0 %}
+                    <tr>
+                        <td>{{ row.activite }}</td>
+                        <td>{{ row.dateDeb|date('d/m/Y') }}</td>
+                        <td>{{ row.inscrits }} / {{ row.nbPlace }}</td>
+                        <td>
+                            <div class="progress" style="height: 20px; min-width: 100px;">
+                                <div class="progress-bar 
+                                    {% if taux >= 80 %}bg-danger
+                                    {% elseif taux >= 50 %}bg-warning
+                                    {% else %}bg-success{% endif %}"
+                                    style="width: {{ taux }}%">
+                                    {{ taux }}%
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                {% else %}
+                    <tr><td colspan="4" class="text-center text-muted py-3">Aucune donnée</td></tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}
+
+{% block javascripts %}
+<script>
+// Graphique par activité
+const ctxA = document.getElementById('chartActivite').getContext('2d');
+new Chart(ctxA, {
+    type: 'bar',
+    data: {
+        labels: {{ parActivite|map(r => r.activite)|json_encode|raw }},
+        datasets: [{
+            label: 'Réservations',
+            data: {{ parActivite|map(r => r.total)|json_encode|raw }},
+            backgroundColor: '#4F46E5',
+            borderRadius: 6,
+        }]
+    },
+    options: { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } }
+});
+
+// Graphique par mois
+const ctxM = document.getElementById('chartMois').getContext('2d');
+new Chart(ctxM, {
+    type: 'line',
+    data: {
+        labels: {{ parMois|map(r => r.mois)|json_encode|raw }},
+        datasets: [{
+            label: 'Réservations',
+            data: {{ parMois|map(r => r.total)|json_encode|raw }},
+            borderColor: '#4F46E5',
+            backgroundColor: 'rgba(79,70,229,0.1)',
+            tension: 0.3,
+            fill: true,
+        }]
+    },
+    options: { scales: { y: { beginAtZero: true } } }
+});
+</script>
+{% endblock %}
