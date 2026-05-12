@@ -1,0 +1,73 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Mon Profil{% endblock %}
+
+{% block body %}
+<div class="row g-4">
+
+    {# Modification du profil #}
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-person-circle me-2"></i> Mon profil</h5>
+            </div>
+            <div class="card-body">
+                {{ form_start(form) }}
+                    {{ form_row(form.nom) }}
+                    {{ form_row(form.prenom) }}
+                    {{ form_row(form.email) }}
+                    {{ form_row(form.login) }}
+                    {{ form_row(form.plainPassword) }}
+                    <button type="submit" class="btn btn-primary mt-2">
+                        <i class="bi bi-check-lg"></i> Enregistrer
+                    </button>
+                {{ form_end(form) }}
+            </div>
+        </div>
+    </div>
+
+    {# Historique des réservations #}
+    <div class="col-md-7">
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0"><i class="bi bi-clock-history me-2"></i> Mes réservations</h5>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-hover align-middle mb-0">
+                    <thead>
+                        <tr>
+                            <th>Activité</th>
+                            <th>Date</th>
+                            <th>Horaires</th>
+                            <th>Places restantes</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for inscrire in reservations %}
+                            {% set session = inscrire.session %}
+                            {% set placesRestantes = session.nbPlace - session.inscrires|length %}
+                            <tr>
+                                <td class="fw-semibold">{{ session.activite.nom }}</td>
+                                <td>{{ session.dateDeb|date('d/m/Y') }}</td>
+                                <td>{{ session.heureDeb|date('H:i') }} - {{ session.heureFin|date('H:i') }}</td>
+                                <td>
+                                    <span class="badge bg-{{ placesRestantes <= 0 ? 'danger' : (placesRestantes <= 3 ? 'warning' : 'success') }}">
+                                        {{ placesRestantes }} / {{ session.nbPlace }}
+                                    </span>
+                                </td>
+                            </tr>
+                        {% else %}
+                            <tr>
+                                <td colspan="4" class="text-center text-muted py-4">
+                                    <i class="bi bi-calendar-x fs-4 me-2"></i> Aucune réservation
+                                </td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+</div>
+{% endblock %}

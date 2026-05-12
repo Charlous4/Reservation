@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Attribute\Route;
 use App\Service\MailerService;
+use App\Repository\InscrireRepository;
 
 #[Route('/membre')]
 final class MembreController extends AbstractController
@@ -33,16 +34,13 @@ final class MembreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // 👇 AJOUT : On crypte le mot de passe à la création
             $plainPassword = $form->get('plainPassword')->getData();
             if ($plainPassword) {
                 $hashedPassword = $passwordHasher->hashPassword($membre, $plainPassword);
                 $membre->setPassword($hashedPassword);
             }
-
             $entityManager->persist($membre);
             $entityManager->flush();
-
             return $this->redirectToRoute('app_membre_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -52,6 +50,59 @@ final class MembreController extends AbstractController
         ]);
     }
 
+    // 👇 ROUTES SANS {id} EN PREMIER
+    #[Route('/profil', name: 'app_profil', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_USER')]
+    public function profil(Request $request, EntityManagerInterface $entityManager, UserPasswordHasherInterface $passwordHasher, InscrireRepository $inscrireRepository): Response
+    {
+        $membre = $this->getUser();
+        $form = $this->createForm(MembreType::class, $membre);
+        $form->handleRequest($request);
+
+        if ($form->isSubmitted() && $form->isValid()) {
+            $plainPassword = $form->get('plainPassword')->getData();
+            if ($plainPassword) {
+                $hashedPassword = $passwordHasher->hashPassword($membre, $plainPassword);
+                $membre->setPassword($hashedPassword);
+            }
+            $entityManager->flush();
+            $this->addFlash('success', 'Profil mis à jour !');
+            return $this->redirectToRoute('app_profil');
+        }
+
+        $reservations = $inscrireRepository->findBy(['membre' => $membre]);
+
+        return $this->render('membre/profil.html.twig', [
+            'form' => $form,
+            'reservations' => $reservations,
+        ]);
+    }
+
+    #[Route('/admin/email-groupe', name: 'app_admin_email_groupe', methods: ['GET', 'POST'])]
+    #[IsGranted('ROLE_ADMIN')]
+    public function emailGroupe(Request $request, MembreRepository $membreRepository, MailerService $mailerService): Response
+    {
+        if ($request->isMethod('POST')) {
+            $sujet = $request->request->get('sujet');
+            $contenu = $request->request->get('contenu');
+
+            $membres = $membreRepository->createQueryBuilder('m')
+                ->leftJoin('m.role', 'r')
+                ->where('r.lib IN (:roles)')
+                ->setParameter('roles', ['Utilisateur', 'Entraîneur'])
+                ->getQuery()
+                ->getResult();
+
+            $mailerService->sendGroupEmail($membres, $sujet, $contenu);
+
+            $this->addFlash('success', count($membres) . ' emails envoyés !');
+            return $this->redirectToRoute('app_admin_email_groupe');
+        }
+
+        return $this->render('admin/email_groupe.html.twig');
+    }
+
+    // 👇 ROUTES AVEC {id} EN DERNIER
     #[Route('/{id}', name: 'app_membre_show', methods: ['GET'])]
     public function show(Membre $membre): Response
     {
@@ -67,18 +118,12 @@ final class MembreController extends AbstractController
         $form->handleRequest($request);
 
         if ($form->isSubmitted() && $form->isValid()) {
-            // 👇 AJOUT : On vérifie si un nouveau mot de passe a été saisi
             $plainPassword = $form->get('plainPassword')->getData();
-
-            // Si oui, on le hache et on le met à jour
             if ($plainPassword) {
                 $hashedPassword = $passwordHasher->hashPassword($membre, $plainPassword);
                 $membre->setPassword($hashedPassword);
             }
-            // Si non, on ne touche pas au mot de passe actuel
-
             $entityManager->flush();
-
             return $this->redirectToRoute('app_membre_index', [], Response::HTTP_SEE_OTHER);
         }
 
@@ -98,29 +143,4 @@ final class MembreController extends AbstractController
 
         return $this->redirectToRoute('app_membre_index', [], Response::HTTP_SEE_OTHER);
     }
-
-    #[Route('/admin/email-groupe', name: 'app_admin_email_groupe', methods: ['GET', 'POST'])]
-#[IsGranted('ROLE_ADMIN')]
-public function emailGroupe(Request $request, MembreRepository $membreRepository, MailerService $mailerService): Response
-{
-    if ($request->isMethod('POST')) {
-    $sujet = $request->request->get('sujet');
-    $contenu = $request->request->get('contenu');
-
-    // 👇 Remplace uniquement ces lignes
-    $membres = $membreRepository->createQueryBuilder('m')
-        ->leftJoin('m.role', 'r')
-        ->where('r.lib IN (:roles)')
-        ->setParameter('roles', ['Utilisateur', 'Entraîneur'])
-        ->getQuery()
-        ->getResult();
-
-    $mailerService->sendGroupEmail($membres, $sujet, $contenu);
-
-    $this->addFlash('success', count($membres) . ' emails envoyés !');
-    return $this->redirectToRoute('app_admin_email_groupe');
-}
-
-    return $this->render('admin/email_groupe.html.twig');
-}
 }

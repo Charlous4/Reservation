@@ -61,4 +61,21 @@ class MailerService
             sleep(2); //  2 seconde entre chaque mail
         }
     }
+
+    public function sendRappel(Membre $membre, Session $session): void
+{
+    $email = (new Email())
+        ->from('noreply@centresportif.fr')
+        ->to($membre->getEmail())
+        ->subject('Rappel : votre session demain !')
+        ->html("
+            <h2>Rappel de session 📅</h2>
+            <p>Bonjour {$membre->getPrenom()},</p>
+            <p>On vous rappelle que vous avez une session <strong>{$session->getActivite()->getNom()}</strong> demain !</p>
+            <p>🕐 De {$session->getHeureDeb()->format('H:i')} à {$session->getHeureFin()->format('H:i')}</p>
+            <p>À demain !</p>
+        ");
+
+    $this->mailer->send($email);
+}
 }
