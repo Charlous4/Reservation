@@ -1,0 +1,13 @@
+Si erreur de près ou de loin a : 
+An exception occurred while executing a query: SQLSTATE[23505]: Unique violation: 7 ERREUR: 
+la valeur d'une clé dupliquée rompt la contrainte unique « session_pkey » DETAIL: La clé « (id)=(1) » existe déjà.
+
+
+Faire dans Adminer 
+
+SELECT setval('session_id_seq', (SELECT MAX(id) FROM session));
+SELECT setval('membre_id_seq', (SELECT MAX(id) FROM membre));
+SELECT setval('activite_id_seq', (SELECT MAX(id) FROM activite));
+SELECT setval('roles_id_seq', (SELECT MAX(id) FROM roles));
+SELECT setval('type_id_seq', (SELECT MAX(id) FROM type));
+SELECT setval('inscrire_id_seq', (SELECT MAX(id) FROM inscrire));
