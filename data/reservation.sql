@@ -1,4 +1,4 @@
--- Adminer 5.4.1 PostgreSQL 15.14 dump
+-- Adminer 5.4.1 PostgreSQL 15.15 dump
 
 DROP TABLE IF EXISTS "activite";
 DROP SEQUENCE IF EXISTS activite_id_seq;
@@ -36,7 +36,9 @@ WITH (oids = false);
 CREATE UNIQUE INDEX inscrire_membre_id_session_id_key ON public.inscrire USING btree (membre_id, session_id);
 
 INSERT INTO "inscrire" ("id", "membre_id", "session_id") VALUES
-(2,	12,	1);
+(2,	12,	1),
+(3,	17,	2),
+(4,	17,	1);
 
 DROP TABLE IF EXISTS "membre";
 DROP SEQUENCE IF EXISTS membre_id_seq;
@@ -61,8 +63,10 @@ CREATE UNIQUE INDEX membre_email_key ON public.membre USING btree (email);
 
 INSERT INTO "membre" ("id", "nom", "prenom", "login", "roles", "password", "role_id", "email") VALUES
 (10,	'admin',	'admin',	'admin',	'["ROLE_ADMIN"]',	'$2y$13$F.O17Fb4qTvUeCaNZ2GYBehTN/QZqau3pYTYUqV872I9OsfGEDMy.',	3,	'admin@admin.fr'),
-(12,	'RAMBEAU',	'Tristan',	'trambeau',	'["ROLE_UTILISATEUR"]',	'$2y$13$eWZAq.GUahjNBpBlFgTNmewsuFWjH7iG7Bz5Jz9mi3JLt6cZfDsRa',	2,	'rambeau@mail.fr'),
-(15,	'RUBIO',	'Charles',	'crubio',	'["ROLE_ENTRAINEUR"]',	'$2y$13$9E/ZOSFX626CxBwB2tec4eH8K0RMfaVyd4vUfBO/lUk0yAMBNTUVq',	1,	'charles@rubio.fr');
+(1,	'Dupont',	'Jean',	'jdupont',	'["ROLE_ENTRAINEUR"]',	'$2y$13$Eo0mfxWzA849T.zBjZpVKuEWcnFALlyRyilsZBtHD7m6y9yTTzgIG',	1,	'jdupont@mail.fr'),
+(17,	'AI',	'Claude',	'claudeai',	'["ROLE_UTILISATEUR"]',	'$2y$13$OKQXYnja6K5ol7J15jlCe.fVmdAPaBnJlaXkXUNxkiktBevNtNBrq',	2,	'claudeai@mail.fr'),
+(15,	'RUBIO',	'Charles',	'crubio',	'["ROLE_ENTRAINEUR"]',	'$2y$13$9E/ZOSFX626CxBwB2tec4eH8K0RMfaVyd4vUfBO/lUk0yAMBNTUVq',	1,	'charles@mail.fr'),
+(12,	'RAMBEAU',	'Tristan',	'trambeau',	'["ROLE_UTILISATEUR"]',	'$2y$13$eWZAq.GUahjNBpBlFgTNmewsuFWjH7iG7Bz5Jz9mi3JLt6cZfDsRa',	2,	'tristan@mail.fr');
 
 DROP TABLE IF EXISTS "roles";
 DROP SEQUENCE IF EXISTS roles_id_seq;
@@ -98,7 +102,8 @@ CREATE TABLE "public"."session" (
 WITH (oids = false);
 
 INSERT INTO "session" ("id", "nb_place", "heure_deb", "heure_fin", "date_deb", "date_fin", "activite_id", "entraineur_id") VALUES
-(1,	2,	'10:00:00',	'12:00:00',	'2026-04-29',	'2026-04-30',	5,	15);
+(1,	2,	'10:00:00',	'12:00:00',	'2026-04-29',	'2026-04-30',	5,	15),
+(2,	11,	'09:00:00',	'12:00:00',	'2026-06-01',	'2026-06-05',	1,	1);
 
 DROP TABLE IF EXISTS "type";
 DROP SEQUENCE IF EXISTS type_id_seq;
@@ -126,4 +131,4 @@ ALTER TABLE ONLY "public"."membre" ADD CONSTRAINT "membre_role_id_fkey" FOREIGN 
 ALTER TABLE ONLY "public"."session" ADD CONSTRAINT "session_activite_id_fkey" FOREIGN KEY (activite_id) REFERENCES activite(id) NOT DEFERRABLE;
 ALTER TABLE ONLY "public"."session" ADD CONSTRAINT "session_entraineur_id_fkey" FOREIGN KEY (entraineur_id) REFERENCES membre(id) NOT DEFERRABLE;
 
--- 2026-05-12 08:42:48 UTC
+-- 2026-05-30 15:42:23 UTC
