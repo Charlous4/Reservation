@@ -42,7 +42,7 @@ class Session
 
     // 👇 CHANGEMENT ICI : Relation ManyToOne (Un seul prof)
     #[ORM\ManyToOne(targetEntity: Membre::class)]
-    #[ORM\JoinColumn(nullable: true)] // Peut être null si pas encore de prof assigné
+    #[ORM\JoinColumn(nullable: true, onDelete: 'SET NULL')] // 👈 On ajoute onDelete
     private ?Membre $entraineur = null;
 
     public function __construct()

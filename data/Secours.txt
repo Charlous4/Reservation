@@ -11,3 +11,9 @@ SELECT setval('activite_id_seq', (SELECT MAX(id) FROM activite));
 SELECT setval('roles_id_seq', (SELECT MAX(id) FROM roles));
 SELECT setval('type_id_seq', (SELECT MAX(id) FROM type));
 SELECT setval('inscrire_id_seq', (SELECT MAX(id) FROM inscrire));
+
+
+Si pb Talbe existe deja après une migration : 
+php bin/console doctrine:migrations:version --add --all
+php bin/console make:migration
+php bin/console doctrine:migrations:migrate
