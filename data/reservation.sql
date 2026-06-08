@@ -131,4 +131,4 @@ ALTER TABLE ONLY "public"."membre" ADD CONSTRAINT "membre_role_id_fkey" FOREIGN 
 ALTER TABLE ONLY "public"."session" ADD CONSTRAINT "session_activite_id_fkey" FOREIGN KEY (activite_id) REFERENCES activite(id) NOT DEFERRABLE;
 ALTER TABLE ONLY "public"."session" ADD CONSTRAINT "session_entraineur_id_fkey" FOREIGN KEY (entraineur_id) REFERENCES membre(id) NOT DEFERRABLE;
 
--- 2026-05-30 15:42:23 UTC
+-- 2026-06-08 08:44:28 UTC
